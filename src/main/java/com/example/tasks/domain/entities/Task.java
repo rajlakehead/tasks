@@ -44,14 +44,14 @@ public class Task {
     public Task() {
     }
 
-    public Task(UUID id, String title, String description, LocalDateTime dueDate, TaskStatus status, TaskList taskList, TaskPriority priority, LocalDateTime created, LocalDateTime updated) {
+    public Task(UUID id, String title, String description, LocalDateTime dueDate, TaskStatus status,TaskPriority priority, TaskList taskList, LocalDateTime created, LocalDateTime updated) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.status = status;
-        this.taskList = taskList;
         this.priority = priority;
+        this.taskList = taskList;
         this.created = created;
         this.updated = updated;
     }
