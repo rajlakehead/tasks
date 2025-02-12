@@ -7,19 +7,22 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TaskListServiceImpl implements TaskListService {
 
-    private final TaskListRepository taskListRepositort;
+    private final TaskListRepository taskListRepository;
 
-    public TaskListServiceImpl(TaskListRepository taskListRepositort) {
-        this.taskListRepositort = taskListRepositort;
+    public TaskListServiceImpl(TaskListRepository taskListRepositorty) {
+        this.taskListRepository = taskListRepositorty;
     }
 
     @Override
     public List<TaskList> listTaskLists() {
-        return taskListRepositort.findAll();
+        return taskListRepository.findAll();
     }
 
     @Override
@@ -33,7 +36,7 @@ public class TaskListServiceImpl implements TaskListService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        return taskListRepositort.save(new TaskList(
+        return taskListRepository.save(new TaskList(
                 null,
                 taskList.getTitle(),
                 taskList.getDescription(),
@@ -41,5 +44,29 @@ public class TaskListServiceImpl implements TaskListService {
                 now,
                 now
         ));
+    }
+
+    @Override
+    public Optional<TaskList> getTaskList(UUID id) {
+        return taskListRepository.findById(id);
+    }
+
+    @Override
+    public TaskList updateTaskList(UUID taskListId, TaskList taskList) {
+        if (null == taskList.getId()){
+            throw new IllegalArgumentException("Task list must have an Id");
+        }
+
+        if(!Objects.equals(taskList.getId(), taskListId)){
+            throw new IllegalArgumentException("Attempting to change task list ID, not permitted");
+        }
+
+        TaskList exisitingTaskList = taskListRepository.findById(taskListId).orElseThrow(() ->
+                new IllegalArgumentException("Task list not found"));
+
+        exisitingTaskList.setTitle(taskList.getTitle());
+        exisitingTaskList.setDescription(taskList.getDescription());
+        exisitingTaskList.setUpdated(LocalDateTime.now());
+        return taskListRepository.save(exisitingTaskList);
     }
 }
